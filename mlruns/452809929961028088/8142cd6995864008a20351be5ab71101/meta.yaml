@@ -1,0 +1,15 @@
+artifact_uri: file:///E:\OneDrive\Data S\Openclassroom\Formation\Projets\P7\mlruns/452809929961028088/8142cd6995864008a20351be5ab71101/artifacts
+end_time: 1680173149284
+entry_point_name: ''
+experiment_id: '452809929961028088'
+lifecycle_stage: active
+run_id: 8142cd6995864008a20351be5ab71101
+run_name: validation_scores
+run_uuid: 8142cd6995864008a20351be5ab71101
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1680173144368
+status: 3
+tags: []
+user_id: omarj

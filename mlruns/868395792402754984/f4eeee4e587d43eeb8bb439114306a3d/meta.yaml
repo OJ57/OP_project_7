@@ -1,0 +1,15 @@
+artifact_uri: file:///E:\OneDrive\Data S\Openclassroom\Formation\Projets\P7\mlruns/868395792402754984/f4eeee4e587d43eeb8bb439114306a3d/artifacts
+end_time: 1680173690821
+entry_point_name: ''
+experiment_id: '868395792402754984'
+lifecycle_stage: active
+run_id: f4eeee4e587d43eeb8bb439114306a3d
+run_name: final_fit_train_validation
+run_uuid: f4eeee4e587d43eeb8bb439114306a3d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1680173670853
+status: 3
+tags: []
+user_id: omarj

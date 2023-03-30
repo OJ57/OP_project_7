@@ -1,0 +1,12 @@
+creation_timestamp: 1680173149284
+current_stage: None
+description: null
+last_updated_timestamp: 1680173149284
+name: modèle_lgbtm_opti_optuna_3_training_set
+run_id: 8142cd6995864008a20351be5ab71101
+run_link: null
+source: file:///E:\OneDrive\Data S\Openclassroom\Formation\Projets\P7\mlruns/452809929961028088/8142cd6995864008a20351be5ab71101/artifacts/model
+status: READY
+status_message: null
+user_id: null
+version: 1
