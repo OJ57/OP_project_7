@@ -1,11 +1,11 @@
-creation_timestamp: 1680173690821
+creation_timestamp: 1680304391510
 current_stage: None
 description: null
-last_updated_timestamp: 1680173690821
+last_updated_timestamp: 1680304391510
 name: final_lgbtm_model_fitted
-run_id: f4eeee4e587d43eeb8bb439114306a3d
+run_id: 820f91f24f3a49d688dd6e83787680d9
 run_link: null
-source: file:///E:\OneDrive\Data S\Openclassroom\Formation\Projets\P7\mlruns/868395792402754984/f4eeee4e587d43eeb8bb439114306a3d/artifacts/model
+source: file:///E:\OneDrive\Data S\Openclassroom\Formation\Projets\P7\mlruns/551089218874560404/820f91f24f3a49d688dd6e83787680d9/artifacts/model
 status: READY
 status_message: null
 user_id: null
