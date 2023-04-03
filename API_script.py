@@ -4,10 +4,14 @@ import joblib
 import pandas as pd
 
 # Load the pre-processed data
-data = pd.read_csv("test_API.csv")  # Replace with the path to your CSV file
+data = pd.read_csv("test_API.csv")
 
 # Load the model
 model = joblib.load("model_prediction.joblib")
+
+# Load the explainer
+explainer = joblib.load("explainer.pkl")
+
 
 app = FastAPI()
 
@@ -28,10 +32,18 @@ async def predict_failure(client: ClientID):
     # Get the features for the given client_id
     features = data.loc[data['SK_ID_CURR'] == client_id].drop(columns='SK_ID_CURR').values.reshape(1, -1)
 
-    # Make a prediction using the loaded model
+    # Make a prediction using the loaded model - probability
     prediction = model.predict_proba(features)[:, 1][0]
 
+    # Make a prediction using the loaded model
     will_fail = 'yes' if int(prediction >= THRESHOLD) == 1 else 'no'
 
+    # Calculate SHAP values for the given client
+    shap_values = explainer(features, check_additivity=False)
+
     # Return the prediction
-    return {"client_id": client_id, "probability_of_failure": prediction, "will_fail": will_fail}
+    return {"client_id": client_id,
+            "probability_of_failure": prediction,
+            "will_fail": will_fail,
+            "shap_values": shap_values.values.tolist()
+            }
