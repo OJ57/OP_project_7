@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+joblib
+pandas
+httpx
+pytest
+numpy
+shap
