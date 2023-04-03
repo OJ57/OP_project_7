@@ -2,6 +2,7 @@ import httpx
 import pytest
 import joblib
 import pandas as pd
+import numpy as np
 
 # URL de l'API, http://localhost:8000 si local
 API_URL = "http://localhost:8000"
@@ -54,3 +55,23 @@ def test_api_decision_threshold():
     will_fail = response.json()["will_fail"]
 
     assert will_fail == 'yes' if probability_of_failure >= THRESHOLD else 'no'
+
+
+def test_api_shap():
+    client_id = 181733
+
+    # Load the pre-processed data
+    data = pd.read_csv("test_API.csv")
+
+    # Load the explainer
+    explainer = joblib.load("explainer.pkl")
+
+    features = data.loc[data['SK_ID_CURR'] == client_id].drop(columns='SK_ID_CURR').values.reshape(1, -1)
+
+    # Calculate SHAP values for the given client
+    manually_calculated_shap_values = explainer(features, check_additivity=False)
+
+    response = httpx.post(f"{API_URL}/predict", json={"client_id": client_id})
+    response_shap_values = np.array(response.json()["shap_values"])
+
+    assert np.allclose(response_shap_values, manually_calculated_shap_values.values, rtol=1e-6, atol=1e-6)
