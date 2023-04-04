@@ -55,11 +55,7 @@ jobs:
 
     - name: Deploy to Heroku
       run: |
-        # Configure Heroku CLI
-        heroku login -i ${{ secrets.HEROKU_API_TOKEN }}
-        heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
-
-        # Deploy to Heroku
-        git push heroku HEAD:main
+          git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
+          git push heroku HEAD:main -fn
 
         
