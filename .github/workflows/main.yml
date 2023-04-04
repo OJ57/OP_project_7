@@ -25,11 +25,11 @@ jobs:
         
     - name: Format
       run: |
-        black app.py
+        black API_script.py
 
     - name: Lint
       run: |
-        pylint --disable=R,C app.py
+        pylint --disable=R,C API_script.py
 
     - name: Start FastAPI app
       run: |
