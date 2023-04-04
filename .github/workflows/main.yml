@@ -1,4 +1,9 @@
-name: CI/CD Pipeline
+name: FastAPI-GitHub-Heroku MLOps pipeline
+
+
+env:
+      HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
 
 on:
   push:
@@ -22,7 +27,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        
+
     - name: Format
       run: |
         black API_script.py
@@ -35,7 +40,26 @@ jobs:
       run: |
         uvicorn API_script:app --host 127.0.0.1 --port 8000 &
         sleep 10 # Allow the API server to start
-        
+
     - name: Run tests
       run: |
         pytest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy to Heroku
+      run: |
+        # Configure Heroku CLI
+        heroku login -i ${{ secrets.HEROKU_API_TOKEN }}
+        heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
+
+        # Deploy to Heroku
+        git push heroku HEAD:main
+
+        
