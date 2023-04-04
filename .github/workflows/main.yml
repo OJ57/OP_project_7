@@ -29,7 +29,7 @@ jobs:
 
     - name: Lint
       run: |
-        pylint --disable=R,C API_script.py
+        pylint --extension-pkg-whitelist='pydantic' --disable=R,C API_script.py
 
     - name: Start FastAPI app
       run: |
