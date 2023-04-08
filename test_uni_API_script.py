@@ -3,15 +3,16 @@ import pytest
 import joblib
 import pandas as pd
 import numpy as np
+from sklearn.neighbors import NearestNeighbors
 
 # URL de l'API, http://localhost:8000 si local
 API_URL = "http://localhost:8000"
 
-THRESHOLD = 0.52
+THRESHOLD = 0.5
 
 
 def test_api_valid_client_id():
-    client_id = 181733  # client_id valide présent dans le fichier CSV
+    client_id = 450148  # client_id valide présent dans le fichier CSV
 
     response = httpx.post(f"{API_URL}/predict", json={"client_id": client_id})
 
@@ -19,6 +20,7 @@ def test_api_valid_client_id():
     assert "client_id" in response.json()
     assert "probability_of_failure" in response.json()
     assert "will_fail" in response.json()
+    assert "nearest_clients" in response.json()
 
 
 def test_api_invalid_client_id():
@@ -30,7 +32,7 @@ def test_api_invalid_client_id():
 
 
 def test_api_probability_calculation():
-    client_id = 181733
+    client_id = 450148
 
     # Load the pre-processed data
     data = pd.read_csv("test_API.csv")
@@ -47,7 +49,7 @@ def test_api_probability_calculation():
 
 
 def test_api_decision_threshold():
-    client_id = 181733
+    client_id = 450148
 
     response = httpx.post(f"{API_URL}/predict", json={"client_id": client_id})
 
@@ -58,7 +60,7 @@ def test_api_decision_threshold():
 
 
 def test_api_shap():
-    client_id = 181733
+    client_id = 450148
 
     # Load the pre-processed data
     data = pd.read_csv("test_API.csv")
@@ -75,3 +77,23 @@ def test_api_shap():
     response_shap_values = np.array(response.json()["shap_values"])
 
     assert np.allclose(response_shap_values, manually_calculated_shap_values.values, rtol=1e-6, atol=1e-6)
+
+
+def test_api_nearest_clients():
+    client_id = 450148
+
+    # Load the pre-processed data
+    data = pd.read_csv("test_API.csv")
+
+    features = data.loc[data['SK_ID_CURR'] == client_id].drop(columns='SK_ID_CURR').values.reshape(1, -1)
+
+    # Calculate 5 nearest clients for the given client
+    nbrs = NearestNeighbors(n_neighbors=5, algorithm='auto').fit(data.drop(columns='SK_ID_CURR'))
+    distances, indices = nbrs.kneighbors(features)
+
+    manually_calculated_nearest_clients = data.iloc[indices[0]]['SK_ID_CURR'].values.tolist()
+
+    response = httpx.post(f"{API_URL}/predict", json={"client_id": client_id})
+    response_nearest_clients = response.json()["nearest_clients"]
+
+    assert response_nearest_clients == manually_calculated_nearest_clients

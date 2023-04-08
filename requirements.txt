@@ -10,3 +10,4 @@ shap
 lightgbm
 black
 pylint
+sklearn

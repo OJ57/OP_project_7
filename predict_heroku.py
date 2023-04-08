@@ -2,7 +2,7 @@ import httpx
 
 API_URL = "https://fastapi-project7.herokuapp.com"
 
-client_id = 181733
+client_id = 450148
 
 # Send a POST request with the client_id as input
 response = httpx.post(f"{API_URL}/predict", json={"client_id": client_id})
