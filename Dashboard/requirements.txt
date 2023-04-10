@@ -1,0 +1,9 @@
+streamlit
+joblib
+pandas
+httpx
+numpy
+shap
+plotly
+seaborn
+matplotlib

@@ -10,4 +10,4 @@ shap
 lightgbm
 black
 pylint
-sklearn
+scikit-learn
