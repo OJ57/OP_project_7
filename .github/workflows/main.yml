@@ -9,8 +9,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    steps:      
     - name: Deploy Dashboard to Heroku
       uses: akhileshns/heroku-deploy@v3.12.13
       with:
