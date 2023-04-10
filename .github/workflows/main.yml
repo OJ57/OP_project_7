@@ -1,6 +1,5 @@
 name: FastAPI-Dashboard-GitHub-Heroku MLOps pipeline
 
-
 on:
   push:
     branches:
