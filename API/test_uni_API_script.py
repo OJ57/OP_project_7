@@ -88,7 +88,7 @@ def test_api_nearest_clients():
     features = data.loc[data['SK_ID_CURR'] == client_id].drop(columns='SK_ID_CURR').values.reshape(1, -1)
 
     # Calculate 5 nearest clients for the given client
-    nbrs = NearestNeighbors(n_neighbors=5, algorithm='auto').fit(data.drop(columns='SK_ID_CURR'))
+    nbrs = NearestNeighbors(n_neighbors=5, algorithm='auto').fit(data.drop(columns='SK_ID_CURR').values)
     distances, indices = nbrs.kneighbors(features)
 
     manually_calculated_nearest_clients = data.iloc[indices[0]]['SK_ID_CURR'].values.tolist()

@@ -42,7 +42,7 @@ async def predict_failure(client: ClientID):
     shap_values = explainer(features, check_additivity=False)
 
     # Compute the 5 nearest clients
-    nbrs = NearestNeighbors(n_neighbors=5, algorithm='auto').fit(data.drop(columns='SK_ID_CURR'))
+    nbrs = NearestNeighbors(n_neighbors=5, algorithm='auto').fit(data.drop(columns='SK_ID_CURR').values)
     _, indices = nbrs.kneighbors(features)
 
     nearest_clients = data.iloc[indices[0]]['SK_ID_CURR'].values.tolist()
