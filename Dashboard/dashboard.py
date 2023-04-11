@@ -9,8 +9,8 @@ import numpy as np
 import shap
 
 # Configuration de l'API
-# API_URL = "http://localhost:8000"
-API_URL = "https://fastapi-project7.herokuapp.com"
+API_URL = "http://localhost:8000"
+# API_URL = "https://fastapi-project7.herokuapp.com"
 
 ordered_features_list = joblib.load('ordered_features_list.joblib')
 explainer = joblib.load('explainer.pkl')
@@ -49,8 +49,10 @@ st.sidebar.image("logo.png", use_column_width=True)
 st.sidebar.divider()
 
 if st.sidebar.checkbox('**Afficher le jeu de données**'):
+    temp = data[["SK_ID_CURR"] + ordered_features_list]
+    temp["SK_ID_CURR"] = temp["SK_ID_CURR"].apply(lambda x: '{:,.0f}'.format(x).replace(',', ''))
     st.subheader("Données des clients")
-    st.write(data[["SK_ID_CURR"] + ordered_features_list])
+    st.dataframe(temp)
     st.divider()
 
 # Sélection du client_id
@@ -140,7 +142,9 @@ if st.sidebar.checkbox('**Afficher les données du client**'):
     st.markdown(f"**Données du client n° {client_id}**")
 
     data_client = data[data["SK_ID_CURR"] == client_id]
-    st.write(data_client[["SK_ID_CURR"] + ordered_features_list])
+    temp_client = data_client[["SK_ID_CURR"] + ordered_features_list]
+    temp_client["SK_ID_CURR"] = temp_client["SK_ID_CURR"].apply(lambda x: '{:,.0f}'.format(x).replace(',', ''))
+    st.dataframe(temp_client)
     st.divider()
 
 if st.sidebar.checkbox('**Comparer les données du client**'):
@@ -225,9 +229,11 @@ if st.sidebar.checkbox('**Clients similaires**'):
                  [["SK_ID_CURR"] + ordered_features_list].style.highlight_max(axis=0))
 
     average_probability = response['average_probability']
+    average_probability = round(100 * average_probability)
+
     positive_cases = response['positive_cases']
 
-    st.markdown(f"Average probability: {average_probability:.2f}")
-    st.markdown(f"Number of positive cases: {positive_cases}")
+    st.markdown(f"**Probabilité moyenne de défaillance des clients voisins:** {average_probability} %")
+    st.markdown(f"**Nombre de clients voisins prédits comme défaillant:** {positive_cases}")
 
     st.divider()
