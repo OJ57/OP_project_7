@@ -166,7 +166,7 @@ if st.sidebar.checkbox('**Comparer les données du client**'):
     # Sélection de la variable
     st.subheader("Choisissez une variable pour comparer le client au reste des clients")
     data_client = data[data["SK_ID_CURR"] == client_id][ordered_features_list]
-    variable = st.selectbox("**Variable**", data_client.columns, label_visibility="visible")
+    variable = st.selectbox("**Variable**", sorted(data_client.columns.tolist()), label_visibility="visible", index=18)
 
     # Plot the distribution for a specific variable
     plt.figure(figsize=(4.5, 3.5))
