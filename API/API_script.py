@@ -64,11 +64,18 @@ async def predict_failure(client: ClientID):
     # Count positive cases (above threshold)
     positive_cases = sum(1 for prob in probabilities if prob >= 0.5)
 
+    # Get the features for the nearest clients
+    features_nearest_clients = data.loc[data['SK_ID_CURR'].isin(nearest_clients)].drop(columns='SK_ID_CURR').values
+
+    # Calculate SHAP values for the nearest clients
+    shap_values_API_nearest_clients = explainer(features_nearest_clients, check_additivity=False)
+
     return {"client_id": client_id,
             "probability_of_failure": prediction,
             "will_fail": will_fail,
             "shap_values": shap_values.values.tolist(),
             "nearest_clients": nearest_clients,
             "average_probability": average_probability,
-            "positive_cases": positive_cases
+            "positive_cases": positive_cases,
+            "shap_values_nearest": shap_values_API_nearest_clients.values.tolist()
             }

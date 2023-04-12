@@ -57,7 +57,7 @@ if st.sidebar.checkbox('**Afficher le jeu de données**'):
 
 # Sélection du client_id
 st.subheader("Choisissez un **numéro client** pour obtenir la prédiction de défaillance")
-client_id = st.selectbox("**Numéro client**", data["SK_ID_CURR"].unique(), label_visibility="visible")
+client_id = st.selectbox("**Numéro client**", data["SK_ID_CURR"].unique(), index=4)
 
 # Obtention la réponse de l'API
 response = get_response(client_id)
@@ -104,7 +104,7 @@ gauge.update_layout(
     height=400  # Set the height in pixels
 )
 
-col1, col2, col3 = st.columns([0.5, 0.3, 0.5])
+col1, col2, col3 = st.columns([0.5, 0.35, 0.5])
 with col1:
     st.plotly_chart(gauge)
 with col2:
@@ -124,16 +124,16 @@ with col2:
 
     # Texte d'accompagnement de la jauge
     if 0 <= p < 25:
-        score_text = 'La probabilité de défaillance du client est très faible.'
+        score_text = 'La probabilité de défaillance du client est _très faible_. **Prêt accordé**'
         st.success(score_text)
     elif 25 <= p < 50:
-        score_text = 'La probabilité de défaillance du client est faible.'
+        score_text = 'La probabilité de défaillance du client est _faible_. **Prêt accordé**'
         st.success(score_text)
     elif 50 <= p < 75:
-        score_text = 'La probabilité de défaillance du client est élevée.'
+        score_text = 'La probabilité de défaillance du client est _élevée_. **Prêt non accordé**'
         st.warning(score_text)
     else:
-        score_text = 'La probabilité de défaillance du client est très élevée !'
+        score_text = 'La probabilité de défaillance du client est _très élevée_ ! **Prêt non accordé**'
         st.error(score_text)
 
 st.divider()
@@ -142,9 +142,22 @@ if st.sidebar.checkbox('**Afficher les données du client**'):
     st.markdown(f"**Données du client n° {client_id}**")
 
     data_client = data[data["SK_ID_CURR"] == client_id]
+
+    st.markdown(f"Age: {round(data_client['DAYS_BIRTH'].values[0] / -365)} ans")
+    st.markdown(f"Est marié: {round(data_client['NAME_FAMILY_STATUS_Married'].values[0])}")
+    st.markdown(f"A fait des études supérieures: {round(data_client['NAME_EDUCATION_TYPE_Higher_education'].values[0])}")
+    st.markdown(f"Pourcentage de temps avec un emploi: {round(100 * data_client['DAYS_EMPLOYED_PERC'].values[0])} %")
+
+    st.markdown(f"Montant du crédit demandé: {round(data_client['AMT_CREDIT'].values[0])}")
+    st.markdown(f"Annuité : {data_client['AMT_ANNUITY'].values[0]}")
+    st.markdown(f"Part de l'assurance crédit par rapport au crédit: {round(100 * data_client['PERC_INSURANCE_CRED'].values[0])} %")
+    st.markdown(f"Nombre de paiements restant (autre crédit): {round(data_client['POS_REMAINING_INSTALMENTS'].values[0])}")
+
     temp_client = data_client[["SK_ID_CURR"] + ordered_features_list]
     temp_client["SK_ID_CURR"] = temp_client["SK_ID_CURR"].apply(lambda x: '{:,.0f}'.format(x).replace(',', ''))
-    st.dataframe(temp_client)
+
+    if st.checkbox('**Afficher les données complètes du client**'):
+        st.dataframe(temp_client)
     st.divider()
 
 if st.sidebar.checkbox('**Comparer les données du client**'):
@@ -188,10 +201,12 @@ if st.sidebar.checkbox('**Expliquer la prédiction**'):
     sns.set(style="darkgrid", font_scale=0.8)
 
     if type_fig == 'Decision':
-        shap.decision_plot(explainer.expected_value, np.array(shap_v), data[data["SK_ID_CURR"] == client_id].drop(
-            columns='SK_ID_CURR').iloc[0], link='logit')
+        nbr_var = st.slider("Nombre de variables", min_value=10, max_value=40, value=20, step=1)
 
-        plt.gcf().set_size_inches(5, 6)
+        shap.decision_plot(explainer.expected_value, np.array(shap_v), data[data["SK_ID_CURR"] == client_id].drop(
+            columns='SK_ID_CURR').iloc[0], link='logit', feature_display_range=slice(-1, -nbr_var - 1, -1))
+
+        plt.gcf().set_size_inches(5, 6 * nbr_var / 20)
 
         # Display the plot in Streamlit
         st.pyplot(plt.gcf(), use_container_width=False)
@@ -199,7 +214,21 @@ if st.sidebar.checkbox('**Expliquer la prédiction**'):
         # Clear the current figure
         plt.clf()
 
+        st.markdown(
+            "Le diagramme de décision est un outil visuel qui permet d'expliquer les prédictions du modèle en "
+            "montrant comment chaque variable influence la prédiction. "
+            "<br>"
+            "L'axe des abscisses représente la probabilité de défaillance du client. La ligne verticale grise indique "
+            "la prédiction de défaillance moyenne de l'ensemble des clients. "
+            "<br>"
+            "L'axe des ordonnées liste les variables du modèle classées par ordre décroissant d'importance, "
+            "en fonction de leur impact sur la prédiction. "
+            "<br>"
+            "Le diagramme démarre à la valeur de base (prédiction moyenne) et ajuste la prédiction en ajoutant la valeur SHAP de chaque variable.",
+            unsafe_allow_html=True)
+
     if type_fig == 'Waterfall':
+        nbr_var = st.slider("Nombre de variables", min_value=10, max_value=40, value=20, step=1)
 
         shap_values_instance = shap.Explanation(
             values=np.array(shap_v)[0],
@@ -208,9 +237,9 @@ if st.sidebar.checkbox('**Expliquer la prédiction**'):
             feature_names=data.drop(columns='SK_ID_CURR').columns.tolist())
 
         # Plot the SHAP waterfall plot for a specific instance
-        shap.waterfall_plot(shap_values_instance, max_display=20)
+        shap.waterfall_plot(shap_values_instance, max_display=nbr_var)
 
-        plt.gcf().set_size_inches(5, 6)
+        plt.gcf().set_size_inches(5, 6 * nbr_var / 20)
 
         # Display the plot in Streamlit
         st.pyplot(plt.gcf(), use_container_width=False)
@@ -218,8 +247,11 @@ if st.sidebar.checkbox('**Expliquer la prédiction**'):
         # Clear the current figure
         plt.clf()
 
-    st.divider()
+        st.markdown(
+            "Le diagramme en cascade est un équivalent du diagramme de décision. La fonction logit est utilisée pour "
+            "l'axe des abscisses.", unsafe_allow_html=True)
 
+    st.divider()
 
 if st.sidebar.checkbox('**Clients similaires**'):
     st.subheader("Données des 5 clients les plus similaires")
@@ -233,7 +265,22 @@ if st.sidebar.checkbox('**Clients similaires**'):
 
     positive_cases = response['positive_cases']
 
-    st.markdown(f"**Probabilité moyenne de défaillance des clients voisins:** {average_probability} %")
+    st.markdown(f"**Probabilité de défaillance moyenne des clients voisins:** {average_probability} %")
     st.markdown(f"**Nombre de clients voisins prédits comme défaillant:** {positive_cases}")
+
+    if st.checkbox('**Afficher le decision plot**'):
+        shap_v_nearest = response["shap_values_nearest"]
+
+        shap.decision_plot(explainer.expected_value, np.array(shap_v_nearest),
+                           data.loc[data['SK_ID_CURR'].isin(nearest_clients)].drop(columns='SK_ID_CURR'), link='logit',
+                           highlight=data[data['SK_ID_CURR'] == 450148].index, plot_color="viridis")
+
+        plt.gcf().set_size_inches(5, 6)
+
+        # Display the plot in Streamlit
+        st.pyplot(plt.gcf(), use_container_width=False)
+
+        # Clear the current figure
+        plt.clf()
 
     st.divider()

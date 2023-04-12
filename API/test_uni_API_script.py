@@ -1,11 +1,10 @@
 import httpx
-import pytest
 import joblib
 import pandas as pd
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
 
-# URL de l'API, http://localhost:8000 si local
+# URL de l'API
 API_URL = "http://localhost:8000"
 
 THRESHOLD = 0.5
@@ -21,6 +20,9 @@ def test_api_valid_client_id():
     assert "probability_of_failure" in response.json()
     assert "will_fail" in response.json()
     assert "nearest_clients" in response.json()
+    assert "average_probability" in response.json()
+    assert "positive_cases" in response.json()
+    assert "shap_values_nearest" in response.json()
 
 
 def test_api_invalid_client_id():
