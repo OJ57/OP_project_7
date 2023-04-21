@@ -9,8 +9,8 @@ import numpy as np
 import shap
 
 # Configuration de l'API
-API_URL = "http://localhost:8000"
-# API_URL = "https://fastapi-project7.herokuapp.com"
+# API_URL = "http://localhost:8000"
+API_URL = "https://fastapi-project7.herokuapp.com"
 
 ordered_features_list = joblib.load('ordered_features_list.joblib')
 explainer = joblib.load('explainer.pkl')
