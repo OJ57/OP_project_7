@@ -9,8 +9,8 @@ import numpy as np
 import shap
 
 # Configuration de l'API
-# API_URL = "http://localhost:8000"
-API_URL = "https://fastapi-project7.herokuapp.com"
+API_URL = "http://localhost:8000"
+# API_URL = "https://fastapi-project7.herokuapp.com"
 
 ordered_features_list = joblib.load('ordered_features_list.joblib')
 explainer = joblib.load('explainer.pkl')
@@ -194,7 +194,7 @@ if st.sidebar.checkbox('**Expliquer la prédiction**'):
 
     # Sélection de la variable
     st.subheader("Choisissez le type de figure")
-    list_fig = ['Decision', 'Waterfall']
+    list_fig = ['Waterfall', 'Decision']
 
     type_fig = st.selectbox("**Type**", list_fig, label_visibility="visible")
 
@@ -224,7 +224,8 @@ if st.sidebar.checkbox('**Expliquer la prédiction**'):
             "L'axe des ordonnées liste les variables du modèle classées par ordre décroissant d'importance, "
             "en fonction de leur impact sur la prédiction. "
             "<br>"
-            "Le diagramme démarre à la valeur de base (prédiction moyenne) et ajuste la prédiction en ajoutant la valeur SHAP de chaque variable.",
+            "Le diagramme démarre à la valeur de base (prédiction moyenne) et ajuste la prédiction en ajoutant la "
+            "valeur SHAP de chaque variable.",
             unsafe_allow_html=True)
 
     if type_fig == 'Waterfall':
@@ -248,8 +249,18 @@ if st.sidebar.checkbox('**Expliquer la prédiction**'):
         plt.clf()
 
         st.markdown(
-            "Le diagramme en cascade est un équivalent du diagramme de décision. La fonction logit est utilisée pour "
-            "l'axe des abscisses.", unsafe_allow_html=True)
+            "Graphique en cascade illustrant la prédiction de défaillance d'un client et montrant la contribution de "
+            "chaque variable à la prédiction. "
+            "Le nom de la variable est précédé par la valeur de la variable en question. "
+            "<br>"
+            "Sous l'axe des abscisses, la valeur de base (E[f(X)]) est affichée, indiquant la valeur attendue du "
+            "modèle évalué sur l'ensemble de données de fond. La fonction logit est utilisée pour l'axe des abscisses. "
+            "<br>"
+            "Les valeurs SHAP de chaque variable sont additionnées pour correspondre à la sortie du modèle avec "
+            "toutes les variables incluses. "
+            "<br>"
+            "Les valeurs SHAP positives poussent le modèle à prédire un défaut de paiement, tandis que les valeurs "
+            "SHAP négatives poussent le modèle à prédire un remboursement du crédit.", unsafe_allow_html=True)
 
     st.divider()
 

@@ -15,7 +15,7 @@ explainer = joblib.load("explainer.pkl")
 
 app = FastAPI()
 
-THRESHOLD = 0.5
+THRESHOLD = 0.5  # seuil de classification optimisé avec le score F2 (voir notebook 4)
 
 
 class ClientID(BaseModel):
@@ -62,7 +62,7 @@ async def predict_failure(client: ClientID):
     average_probability = sum(probabilities) / len(probabilities)
 
     # Count positive cases (above threshold)
-    positive_cases = sum(1 for prob in probabilities if prob >= 0.5)
+    positive_cases = sum(1 for prob in probabilities if prob >= THRESHOLD)
 
     # Get the features for the nearest clients
     features_nearest_clients = data.loc[data['SK_ID_CURR'].isin(nearest_clients)].drop(columns='SK_ID_CURR').values

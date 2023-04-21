@@ -7,7 +7,7 @@ from sklearn.neighbors import NearestNeighbors
 # URL de l'API
 API_URL = "http://localhost:8000"
 
-THRESHOLD = 0.5
+THRESHOLD = 0.5  # seuil de classification optimisé avec le score F2 (voir notebook 4)
 
 
 def test_api_valid_client_id():
