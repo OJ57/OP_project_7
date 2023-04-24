@@ -32,4 +32,5 @@ Les quatres __notebooks Jupyter__ décrivent :
 4) La modelisation : sélection du modèle, optimisation et interprétabilité
 
 L'API est disponible à l'adresse suivante : https://fastapi-project7.herokuapp.com/
+
 Le Dashboard : https://dashboard-p7.herokuapp.com/
