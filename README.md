@@ -30,3 +30,6 @@ Les quatres __notebooks Jupyter__ décrivent :
 2) L'analyse exploratoire et nettoyage des fichiers secondaires, scripts et fusion des jeux de données
 3) Le preprocessing du jeu de données final : imputation des valeurs manquantes et features selection
 4) La modelisation : sélection du modèle, optimisation et interprétabilité
+
+L'API est disponible à l'adresse suivante : https://fastapi-project7.herokuapp.com/
+Le Dashboard : https://dashboard-p7.herokuapp.com/
